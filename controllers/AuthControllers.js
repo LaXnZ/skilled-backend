@@ -79,6 +79,7 @@ export const login = async (req, res, next) => {
 };
 
 export const getUserInfo = async (req, res, next) => {
+  
   try {
     if (req?.userId) {
       const prisma = new PrismaClient();
@@ -87,6 +88,7 @@ export const getUserInfo = async (req, res, next) => {
           id: req.userId,
         },
       });
+      delete user?.password;
       return res.status(200).json({
         user: {
           id: user?.id,
