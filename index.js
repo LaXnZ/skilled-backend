@@ -8,6 +8,8 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const origin = process.env.PUBLIC_URL;
+console.log(origin);
 
 app.use(
   cors({
@@ -16,6 +18,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.use("/uploads/profiles", express.static("uploads/profiles"));
 
 app.use(cookieParser());
 app.use(express.json());
