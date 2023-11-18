@@ -269,7 +269,7 @@ export const addReview = async (req, res, next) => {
           });
           return res.status(201).json({ newReview });
         }
-        return res.status(400).send("ReviewText and Rating are required.");
+        return res.status(400).send("Review and Rating are required.");
       }
       return res
         .status(400)
