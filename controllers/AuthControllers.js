@@ -79,9 +79,8 @@ export const login = async (req, res, next) => {
 };
 
 export const getUserInfo = async (req, res, next) => {
-  
   try {
-    if (req?.userId) {
+    if (req.userId) {
       const prisma = new PrismaClient();
       const user = await prisma.user.findUnique({
         where: {
