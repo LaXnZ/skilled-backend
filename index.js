@@ -17,7 +17,7 @@ console.log(origin);
 
 app.use(
   cors({
-    origin: "*",
+    origin: origin,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })

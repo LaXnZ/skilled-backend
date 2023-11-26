@@ -16,6 +16,8 @@ const createToken = (email, userId) => {
   });
 };
 
+const BE_URL = "http://localhost:3001";
+
 export const signup = async (req, res, next) => {
   try {
     const prisma = new PrismaClient();
@@ -67,7 +69,15 @@ export const login = async (req, res, next) => {
       }
 
       return res.status(200).json({
-        user: { id: user?.id, email: user?.email },
+        user: {
+          id: user.id,
+          email: user.email,
+          image: `${BE_URL}/${user.profileImage}`,
+          username: user.username,
+          fullName: user.fullName,
+          description: user.description,
+          isProfileSet: user.isProfileInfoSet,
+        },
         jwt: createToken(email, user.id),
       });
     } else {
@@ -87,21 +97,32 @@ export const getUserInfo = async (req, res, next) => {
           id: req.userId,
         },
       });
-      delete user?.password;
-      return res.status(200).json({
-        user: {
-          id: user?.id,
-          email: user?.email,
-          image: user?.profileImage,
-          username: user?.username,
-          fullName: user?.fullName,
-          description: user?.description,
-          isProfileSet: user?.isProfileInfoSet,
-        },
-      });
+
+      // Check if the user exists before accessing its properties
+      if (user) {
+        delete user.password;
+        return res.status(200).json({
+          user: {
+            id: user.id,
+            email: user.email,
+            image: `${BE_URL}/${user.profileImage}`,
+            username: user.username,
+            fullName: user.fullName,
+            description: user.description,
+            isProfileSet: user.isProfileInfoSet,
+          },
+        });
+      } else {
+        // Handle the case where the user with the specified ID is not found
+        return res.status(404).json({ error: "User not found" });
+      }
+    } else {
+      // Handle the case where req.userId is not defined
+      return res.status(400).json({ error: "User ID not provided" });
     }
   } catch (err) {
-    res.status(500).send("Internal Server Occured");
+    console.error(err);
+    res.status(500).send("Internal Server Error", err?.message);
   }
 };
 
@@ -109,39 +130,55 @@ export const setUserInfo = async (req, res, next) => {
   try {
     if (req?.userId) {
       const { userName, fullName, description } = req.body;
-      if (userName && fullName && description) {
-        const prisma = new PrismaClient();
-        const userNameValid = await prisma.user.findUnique({
-          where: { username: userName },
+
+      // Input validation
+      if (!(userName && fullName && description)) {
+        return res.status(400).json({
+          error: "Username, Full Name, and description are required.",
         });
-        if (userNameValid) {
-          return res.status(200).json({ userNameError: true });
-        }
-        await prisma.user.update({
-          where: { id: req.userId },
-          data: {
-            username: userName,
-            fullName,
-            description,
-            isProfileInfoSet: true,
-          },
-        });
-        return res.status(200).send("Profile data updated successfully.");
-      } else {
-        return res
-          .status(400)
-          .send("Username, Full Name and description should be included.");
       }
+
+      const prisma = new PrismaClient();
+
+      // Check if the username is already taken
+      const userNameValid = await prisma.user.findUnique({
+        where: { username: userName },
+      });
+
+      if (userNameValid) {
+        return res.status(200).json({ userNameError: true });
+      }
+
+      // Update user profile information
+      await prisma.user.update({
+        where: { id: req.userId },
+        data: {
+          username: userName,
+          fullName,
+          description,
+          isProfileInfoSet: true,
+        },
+      });
+
+      // Respond with success
+      return res
+        .status(200)
+        .json({ success: true, message: "Profile data updated successfully." });
+    } else {
+      return res.status(400).json({ error: "User ID not provided." });
     }
   } catch (err) {
+    console.error(err);
+
+    // Handle Prisma errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === "P2002") {
         return res.status(400).json({ userNameError: true });
       }
-    } else {
-      return res.status(500).send("Internal Server Error");
     }
-    throw err;
+
+    // Handle other errors
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
