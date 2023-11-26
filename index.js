@@ -17,7 +17,7 @@ console.log(origin);
 
 app.use(
   cors({
-    origin: [process.env.PUBLIC_URL],
+    origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
