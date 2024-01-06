@@ -8,6 +8,7 @@ import { orderRoutes } from "./routes/OrderRoutes.js";
 import { messageRoutes } from "./routes/MessageRoutes.js";
 import { dashboardRoutes } from "./routes/DashboardRoutes.js";
 import feedbackRoutes from './routes/FeedbackRoutes.js';
+import userManagementRoutes from "./routes/UserManagementRoutes.js";
 
 
 
@@ -42,6 +43,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 //Importing feedback routes
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/users', userManagementRoutes);
 
 
 app.listen(port, () => {

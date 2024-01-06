@@ -1,5 +1,5 @@
 /*Make a controller for user management */ 
-Path: controllers/UserController.js
+
  import { PrismaClient } from "@prisma/client";
 
  export const getAllUsers = async (req, res, next) => {
