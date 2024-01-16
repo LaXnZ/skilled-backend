@@ -9,8 +9,8 @@ import { messageRoutes } from "./routes/MessageRoutes.js";
 import { dashboardRoutes } from "./routes/DashboardRoutes.js";
 import feedbackRoutes from './routes/FeedbackRoutes.js';
 import userManagementRoutes from "./routes/UserManagementRoutes.js";
-
-
+import * as paypal from "./paypal-api.js";
+const {PORT = 3001} = process.env;
 
 dotenv.config();
 
@@ -32,7 +32,6 @@ app.use(
 
 app.use("/uploads/profiles", express.static("uploads/profiles"));
 app.use("/uploads", express.static("uploads"));
-
 app.use(cookieParser());
 app.use(express.json());
 
@@ -45,7 +44,22 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userManagementRoutes);
 
+app.post(`/my-server/create-paypal-order`, async (req, res) => 
+{
+  try{
+    const order = await paypal.createOrder(req.body);
+    res.json(order);
+  }catch(error){
+    res.status(500).send(err.message);}})
+app.post(`/my-server/capture-paypal-transaction`, async (req, res) => {
+    const { orderID} = req.body;
+    try {
+      const captureData = await paypal.captureOPayment(orderID);
+      res.json(captureData);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }})
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`[server]: Server is running at http://localhost:${PORT}`);
 });
