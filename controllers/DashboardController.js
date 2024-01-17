@@ -104,3 +104,39 @@ export const getSellerData = async (req, res, next) => {
     return res.status(500).send("Internal Server Error");
   }
 };
+
+export const getAdminDashboardData = async (req, res) => {
+  try {
+    const prisma = new PrismaClient();
+
+    const totalGigs = await prisma.gigs.count();
+    const totalOrders = await prisma.orders.count();
+    const totalUsers = await prisma.user.count();
+
+    const {
+      _sum: { price: totalRevenue },
+    } = await prisma.orders.aggregate({
+      _sum: {
+        price: true,
+      },
+    });
+
+    const latestUnreadMessages = await prisma.message.groupBy({
+      by: ["recipientId"],
+      _count: true, // Fix: Remove the "select" field
+    });
+
+    const adminDashboardData = {
+      totalGigs,
+      totalOrders,
+      totalUsers,
+      totalRevenue,
+      latestUnreadMessages,
+    };
+
+    return res.status(200).json({ adminDashboardData });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Internal Server Error");
+  }
+};
