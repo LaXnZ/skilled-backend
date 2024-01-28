@@ -20,8 +20,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: PUBLIC_URL, // Set the correct origin here
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 );
