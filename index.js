@@ -20,11 +20,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://skilled-final.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,
   })
 );
+
 
 app.use("/uploads/profiles", express.static("uploads/profiles"));
 app.use("/uploads", express.static("uploads"));
