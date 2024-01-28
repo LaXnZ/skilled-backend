@@ -7,7 +7,7 @@ import { isAdmin } from "../middlewares/AdminMiddleware.js";
 
 const userManagementRoutes = Router();
 
-userManagementRoutes.get("/get-all-users", verifyToken, getAllUsers);
+userManagementRoutes.get("/get-all-users",  getAllUsers);
 
 
 export default userManagementRoutes;

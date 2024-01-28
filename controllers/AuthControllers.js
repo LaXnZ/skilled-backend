@@ -112,6 +112,7 @@ export const getUserInfo = async (req, res, next) => {
             id: user.id,
             email: user.email,
             image: `${BE_URL}/${user.profileImage}`,
+            userRole: user.userRole,
             username: user.username,
             fullName: user.fullName,
             description: user.description,

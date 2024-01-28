@@ -85,9 +85,6 @@ model Reviews {
   reviewerId Int
 }
 
-
-
-
 model Message {
   id          Int      @id @default(autoincrement())
   text        String
@@ -101,9 +98,6 @@ model Message {
   orderId     Int
 }
 
-
-// create a model for user forms with an id that will have a relationship with a user and the user table and give me the neccessary fields
-
 model UserForm {
   id               Int      @id @default(autoincrement())
   
@@ -114,4 +108,13 @@ model UserForm {
   isProfileInfoSet Boolean  @default(false)
 
   createdAt        DateTime @default(now())
+}
+
+model Portfolio {
+  id        Int      @id @default(autoincrement())
+  cvFile    String
+  coverPhoto String
+  about     String
+  skills    String
+  createdAt DateTime @default(now())
 }

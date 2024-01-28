@@ -10,6 +10,7 @@ import { dashboardRoutes } from "./routes/DashboardRoutes.js";
 import feedbackRoutes from './routes/FeedbackRoutes.js';
 import userManagementRoutes from "./routes/UserManagementRoutes.js";
 import * as paypal from "./paypal-api.js";
+import { portfolioRoutes } from "./routes/PortfolioRoutes.js";
 const {PORT = 3001} = process.env;
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/api/dashboard", dashboardRoutes);
 //Importing feedback routes
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userManagementRoutes);
+app.use('/api/portfolio', portfolioRoutes);
 
 app.post(`/my-server/create-paypal-order`, async (req, res) => 
 {
