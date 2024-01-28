@@ -11,21 +11,16 @@ import feedbackRoutes from './routes/FeedbackRoutes.js';
 import userManagementRoutes from "./routes/UserManagementRoutes.js";
 import * as paypal from "./paypal-api.js";
 import { portfolioRoutes } from "./routes/PortfolioRoutes.js";
-const {PORT = 3001} = process.env;
+
+const { PORT = 3001, PUBLIC_URL } = process.env;
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT ;
-const origin = process.env.PUBLIC_URL;
-
-
-
-console.log(origin);
 
 app.use(
   cors({
-    origin: origin,
+    origin: PUBLIC_URL, // Set the correct origin here
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
@@ -41,26 +36,29 @@ app.use("/api/gigs", gigRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-//Importing feedback routes
+// Importing feedback routes
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userManagementRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 
-app.post(`/my-server/create-paypal-order`, async (req, res) => 
-{
-  try{
+app.post(`/my-server/create-paypal-order`, async (req, res) => {
+  try {
     const order = await paypal.createOrder(req.body);
     res.json(order);
-  }catch(error){
-    res.status(500).send(err.message);}})
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 app.post(`/my-server/capture-paypal-transaction`, async (req, res) => {
-    const { orderID} = req.body;
-    try {
-      const captureData = await paypal.captureOPayment(orderID);
-      res.json(captureData);
-    } catch (error) {
-      res.status(500).send(error.message);
-    }})
+  const { orderID } = req.body;
+  try {
+    const captureData = await paypal.captureOPayment(orderID);
+    res.json(captureData);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`[server]: Server is running at http://localhost:${PORT}`);
